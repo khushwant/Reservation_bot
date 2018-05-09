@@ -76,9 +76,8 @@ class MeHandler(webapp2.RequestHandler):
         parseConfig()
         url = BASE_URL + "getMe"
         respBuf = urllib2.urlopen(url)
-        self.response.write("ProjectID: <b>{}</b>" .format(PROJECT_ID))
-        # self.response.headers["Content-Type"] = "text/plain"
-        # self.response.write(formatResp(respBuf))
+        self.response.headers["Content-Type"] = "text/plain"
+        self.response.write(formatResp(respBuf))
 
 
 # Get information about webhook status
@@ -138,7 +137,6 @@ app = webapp2.WSGIApplication([
     ('/info', DataInfoPage),
     ('/set_webhook', SetWebhookHandler),
     ('/get_webhook', GetWebhookHandler),
-    (r'/TG.*' , WebhookHandler),
-    # ('/webhook/bot567256577:AAELf6Y4vOqYUfdyPMhOSiUedKQ-rZt6Lqs', WebHookHandler),
+    (r'/TG.*', WebhookHandler),
     ('/me', MeHandler)
 ], debug=True)
