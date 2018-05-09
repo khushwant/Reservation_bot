@@ -1,11 +1,14 @@
 from google.appengine.ext import ndb
+import logging
 
+logger = logging.getLogger("reservation-bot")
+logger.setLevel(logging.DEBUG)
 # These environment variables are configured in app.yaml.
 
 class Bookings(ndb.Model):
-    booking_no = ndb.IntegerProperty(required=True)
-    name = ndb.StringProperty(required=True)
-    email = ndb.KeyProperty(required=True)
+    booking_no = ndb.IntegerProperty(indexed=True)
+    name = ndb.StringProperty(indexed=True)
+    email = ndb.KeyProperty(indexed=True)
     table_no = ndb.IntegerProperty()
     confirm = ndb.IntegerProperty(default=None)
     owner = ndb.IntegerProperty()
@@ -16,13 +19,15 @@ class Logs(ndb.Model):
 class DBHelper:
 
     def add_email(self, email, owner):
-        booking = Bookings()
+        # booking = Bookings()
         # stmt = "INSERT INTO bookings (name, owner) VALUES (%s, %s)"
         # args = (name, owner)
-        key_a = ndb.Key(Bookings, email);
+        key_a = ndb.Key(Bookings, email)
+        logger.info("Key_a=%s"%key_a)
         booking = Bookings(key=key_a)
         booking.put()
-        # booking.email = email
+        booking = key_a.get()
+        booking.email = email
         booking.owner = owner
         booking.put()
         booking.booking_no = self.key().id()
@@ -86,6 +91,11 @@ class DBHelper:
         logs = Logs.query()
 
         return (booking, logs)
+
+    def get_bookings_by_email(self, email):
+        booking = Bookings.query()
+        searchquery = booking.filter(Bookings.email == email)
+        return [x for x in searchquery]
 
     def add_log(self, log_text):
         # stmt = "INSERT INTO logs VALUES (%s)"
