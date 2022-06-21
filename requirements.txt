@@ -5,5 +5,5 @@ requests==2.18.4
 requests-toolbelt==0.8.0
 urllib3==1.22
 nltk==3.2.4
-numpy==1.13.1
+numpy==1.22.0
 six==1.11.0
